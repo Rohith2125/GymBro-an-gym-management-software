@@ -1,26 +1,32 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const membership = new mongoose.Schema({
+const membershipSchema = new mongoose.Schema(
+  {
     userID: {
-        type: mongoose.Types.ObjectId,
-        ref: 'user',
-        required: true
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     planId: {
-        type: mongoose.Types.ObjectId,
-        ref: 'plan',
-        required: true
+      type: mongoose.Types.ObjectId,
+      ref: "Plan",
+      required: true,
     },
     from: {
-        type: Date,
-        default: Date.now,
-        required: true
+      type: Date,
+      default: Date.now,
+      required: true,
     },
     expiresOn: {
-        type: Date,
-        required: true
+      type: Date,
+      required: true,
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { timestamps: true }
+);
 
-}, { timestamps: true })
-
-module.exports = mongoose.model('membership', membership, 'memberships')
+module.exports = mongoose.model("Membership", membershipSchema);

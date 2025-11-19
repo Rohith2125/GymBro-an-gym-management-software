@@ -1,32 +1,40 @@
-const express= require('express')
-const dotenv= require('dotenv') 
-dotenv.config()
-const cors= require('cors')
-const app = express() 
-const userRoutes= require('./Routes/userRoutes')
-const authRoutes= require('./Routes/authRoutes')
-const connectDB= require('./Config/db')
-const cookieparser= require('cookie-parser')
+require("dotenv").config();
 
-connectDB()
-const PORT= process.env.PORT|| 4000
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const dbConnect = require("./config/db");
 
-app.use(cors({
-   origin:'http://localhost:5173', 
-   credentials: true,
-   allowedHeaders: ['Content-Type', 'Authorization']
-}))
-app.use(express.json())
-app.use(cookieparser())
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const membershipRoutes = require("./routes/membershipRoutes");
 
-app.get('/',(req,res)=>{
-    res.send('ROUTE IS TAPPED')
-})
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-app.use('/api', userRoutes)
-app.use('/api', authRoutes)
+// Connect DB
+dbConnect();
 
+// Middlewares
+app.use(express.json());
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // 
+    credentials: true,
+  })
+);
 
-app.listen(PORT, ()=>{
-    console.log(`app is running on http://localhost:${PORT}`)
-})
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/memberships", membershipRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Gym backend is running");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

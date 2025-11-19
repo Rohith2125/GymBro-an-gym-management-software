@@ -1,20 +1,22 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const plan = new mongoose.Schema({
+const planSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
     duration: {
-        type: Number,
-        required: true,
+      type: Number, // in months
+      required: true,
     },
     amount: {
-        type: Number,
-        required: true,
+      type: Number, // in rupees
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-    }
-})
-
-module.exports = mongoose.model('plan', plan, 'plans')
+module.exports = mongoose.model("Plan", planSchema);
