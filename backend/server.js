@@ -1,5 +1,5 @@
-require("dotenv").config();
 
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const dbConnect = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const membershipRoutes = require("./routes/membershipRoutes");
 
@@ -28,6 +29,7 @@ app.use(
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/auth", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/memberships", membershipRoutes);
 
@@ -36,5 +38,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port http://localhost:${PORT}`);
 });

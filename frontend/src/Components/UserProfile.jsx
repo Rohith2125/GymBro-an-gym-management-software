@@ -12,8 +12,8 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetch = async () => {
             try {
-                const res = await axios.get(`${API}/userProfile`, { withCredentials: true })
-                console.log(res.data)
+                const res = await axios.get(`${API}/user/Profile`, { withCredentials: true })
+                console.log(res.data.count)
                 setProfile(res.data.profileData)
             } catch (err) {
                 console.log(err.message)
@@ -27,11 +27,15 @@ const AdminDashboard = () => {
             <div>
                 <h1>hii</h1>
                 {profile ? (
+                    <div>
                     <h1>{profile.user.name}</h1>
+                    <h1>{profile.user.email}</h1>
+                    </div>
                 ) : (
                     <h1>this is admin place</h1>
                 )}
             </div>
+
 
         </>
     )

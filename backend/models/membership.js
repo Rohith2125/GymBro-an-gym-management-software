@@ -23,10 +23,10 @@ const membershipSchema = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Membership", membershipSchema);
+module.exports = mongoose.model("Membership", membershipSchema, 'memberships');

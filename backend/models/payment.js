@@ -7,6 +7,10 @@ const paymentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    planId: { // ✅ ADD THIS
+      type: mongoose.Types.ObjectId,
+      ref: "Plan",
+    },
     amountPaid: {
       type: Number,
       required: true,
@@ -15,16 +19,17 @@ const paymentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    razorpayPaymentId: { // ✅ ADD THIS
+      type: String,
+    },
+    razorpaySignature: { // ✅ ADD THIS
+      type: String,
+    },
     isPaid: {
       type: Boolean,
       default: false,
     },
-    // meta: {
-    //   type: Object, // optional extra data
-    //   default: {},
-    // },
   },
   { timestamps: true }
 );
-
-module.exports = mongoose.model("Payment", paymentSchema);
+module.exports = mongoose.model("Payment", paymentSchema, 'payments');
