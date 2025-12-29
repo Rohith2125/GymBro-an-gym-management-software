@@ -3,7 +3,7 @@ import axios from 'axios'
 import PlanCreation from '../Components/PlanCreation'
 import LogoutButton from '../Components/LogoutButton'
 import PaymentHistory from '../Components/PaymentHistory'
-import PlansEdit from './PlansEdit'
+import Plans from '../Components/Plans'
 const AdminDashboard = () => {
     const API = "http://localhost:3000/api"
 
@@ -42,7 +42,6 @@ const AdminDashboard = () => {
 
     return (
         <div className="min-h-screen bg-gray-100">
-<PlansEdit/>
 
             {/* Header */}
             <header className="bg-black text-white sticky top-0 z-50">
@@ -162,6 +161,10 @@ const AdminDashboard = () => {
                     <div className="animate-fade-in">
                         <h2 className="text-2xl font-bold text-gray-900 mb-6">Manage Plans</h2>
                         <PlanCreation />
+                        <div className="mt-8">
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">Existing Plans</h3>
+                            <Plans />
+                        </div>
                     </div>
                 )}
 

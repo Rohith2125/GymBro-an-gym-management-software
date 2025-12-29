@@ -8,6 +8,8 @@ const PaymentHistory = ({ limit }) => {
   const fetchData = async () => {
     try {
       const { data } = await axios.get('http://localhost:3000/api/user/all-members', { withCredentials: true })
+      // console.log('PaymentHistory API Response:', data)
+      // console.log('Subscribers:', data.subscribers)
       const allRecords = data.subscribers || []
       setRecords(limit ? allRecords.slice(0, limit) : allRecords)
     } catch (error) {

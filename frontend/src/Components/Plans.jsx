@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import AdminPlanActions from './Admincomp/AdminPlanActions'
 
 function Plans({ selectedPlan, setSelectedPlan }) {
   const API = 'http://localhost:3000/api'
   const [plans, setPlans] = useState([])
   const [loading, setLoading] = useState(true)
-  const [role, setRole] = useState()
+  const [role, setRole] = useState(null)
+  const [editplan, setEditPlan] = useState(null)
+  const [editOn, setEditOn] = useState(false)
+
+
+
 
   useEffect(() => {
     fetchPlans()
@@ -14,9 +20,11 @@ function Plans({ selectedPlan, setSelectedPlan }) {
   async function fetchPlans() {
     try {
       const { data } = await axios.get(`${API}/user/all-plans`, { withCredentials: true })
+      console.log('API Response:', data)
+      console.log('Plans from API:', data.plans)
       setPlans(data.plans || [])
       setRole(data.role)
-      console.log(role)
+      // setPlans(prev => prev.filter(plan => plan._id !== planid))//does not change the array but returns new array!
     } catch (error) {
       console.log('Error loading plans:', error.message)
     } finally {
@@ -47,34 +55,50 @@ function Plans({ selectedPlan, setSelectedPlan }) {
     )
   }
 
+  const isAdmin = role === 'admin'
 
-  function AdminActions() {
-    return (
-      <div>
-        <button className="btn-primary">Edit</button>
-        <button className="btn-primary">Delete</button>
-      </div>
-    )
+  const handleUpdate = (plan) => {
+    setEditPlan(plan)
+    setEditOn(true)
   }
 
-  function HandleEdit() {
-
-  }
-  const handleDelete = async () => {
+  async function handleEdit(planid, updatedPlan) {
     try {
-
-
+      const { data } = await axios.put(
+        `${API}/auth/update-plan/${planid}`,
+        updatedPlan,
+        { withCredentials: true }
+      )
+      console.log('Plan updated:', data)
+      // Update the plans array with the edited plan
+      setPlans(prev => prev.map(p => p._id === planid ? data.plan : p))
     } catch (error) {
-      console.log(error)
+      console.log('Error updating plan:', error)
     }
   }
+  const handleDelete = async (planid) => {
+    try {
+      await axios.delete(`${API}/auth/delete-plan/${planid}`, {
+        withCredentials: true,
+      });
+      console.log('Plan deleted successfully:', planid);
+
+      setPlans(prev => prev.filter(p => p._id !== planid));
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
 
   return (
     <div className="grid md:grid-cols-2 gap-4">
+
       {plans.map((plan, index) => (
         <div
           key={plan._id}
-          onClick={() => setSelectedPlan(plan)}
+          onClick={() => setSelectedPlan?.(plan)}
           className={`
                         relative cursor-pointer bg-white rounded-2xl p-6 border-2 transition-all duration-300
                         ${selectedPlan?._id === plan._id
@@ -111,7 +135,10 @@ function Plans({ selectedPlan, setSelectedPlan }) {
               </p>
             </div>
             <div>
-              {role == 'admin' && <AdminAction />
+              {isAdmin && <AdminPlanActions
+                onEdit={() => { handleUpdate(plan) }}
+                onDelete={() => { handleDelete(plan._id) }}
+              />
               }
             </div>
 
@@ -150,6 +177,56 @@ function Plans({ selectedPlan, setSelectedPlan }) {
           </div>
         </div>
       ))}
+      {/* Edit Plan Modal */}
+      {editOn && editplan && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setEditOn(false)}>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Edit Plan</h3>
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <input
+              type="text"
+              value={editplan.title}
+              onChange={(e) => setEditPlan({ ...editplan, title: e.target.value })}
+              className="w-full border-2 border-gray-300 p-3 rounded-xl mb-4 focus:border-black focus:outline-none"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Amount (₹)</label>
+            <input
+              type="number"
+              value={editplan.amount}
+              onChange={(e) => setEditPlan({ ...editplan, amount: Number(e.target.value) })}
+              className="w-full border-2 border-gray-300 p-3 rounded-xl mb-4 focus:border-black focus:outline-none"
+            />
+
+            <label className="block text-sm font-medium text-gray-700 mb-1">Duration (months)</label>
+            <input
+              type="number"
+              value={editplan.duration}
+              onChange={(e) => setEditPlan({ ...editplan, duration: Number(e.target.value) })}
+              className="w-full border-2 border-gray-300 p-3 rounded-xl mb-6 focus:border-black focus:outline-none"
+            />
+
+            <div className="flex gap-3">
+              <button
+                className="flex-1 bg-gray-200 text-gray-800 p-3 rounded-xl font-medium hover:bg-gray-300 transition-colors"
+                onClick={() => setEditOn(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="flex-1 bg-black text-white p-3 rounded-xl font-medium hover:bg-gray-800 transition-colors"
+                onClick={() => {
+                  handleEdit(editplan._id, editplan)
+                  setEditOn(false)
+                }}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

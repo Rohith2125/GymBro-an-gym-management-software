@@ -41,7 +41,7 @@ exports.CreatePayment = async (req, res) => {
       isPaid: false, // ⚠️ FALSE because user hasn't paid yet
       transactionId: order.id,
       amountPaid: order.amount / 100,
-      planId: planId 
+      planId: planId
     })
 
     // user hasn't paid yet!
@@ -78,16 +78,16 @@ exports.VerifyPayment = async (req, res) => {
     const isAuthentic = expectedSignature === razorpay_signature
 
     if (!isAuthentic) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Payment verification failed - Invalid signature' 
+      return res.status(400).json({
+        success: false,
+        message: 'Payment verification failed - Invalid signature'
       })
     }
 
     // STEP 2: Update payment record to paid
     const paymentRecord = await payment.findOneAndUpdate(
       { transactionId: razorpay_order_id },
-      { 
+      {
         isPaid: true,
         razorpayPaymentId: razorpay_payment_id,
         razorpaySignature: razorpay_signature
@@ -101,7 +101,7 @@ exports.VerifyPayment = async (req, res) => {
 
     // STEP 3: NOW create membership (payment is verified!)
     const plan = paymentRecord.planId
-    
+
     const fromDate = new Date()
     const expiresOn = new Date(fromDate)
     expiresOn.setMonth(expiresOn.getMonth() + plan.duration)
@@ -122,17 +122,17 @@ exports.VerifyPayment = async (req, res) => {
 
   } catch (error) {
     console.log('Verification error:', error)
-    return res.status(500).json({ 
-      message: 'Verification failed', 
-      error: error.message 
+    return res.status(500).json({
+      message: 'Verification failed',
+      error: error.message
     })
   }
 }
 
-exports.AllPayments= async (req,res)=>{
-try{
+exports.AllPayments = async (req, res) => {
+  try {
 
-    const subscribers= await Membership.find().populate("userID", "name").populate('planId', "title amount isActive ").sort({created: -1})
+    const subscribers = await Membership.find().populate("userID", "name").populate('planId', "title amount").sort({ createdAt: -1 })
     // const record= {
     //     name: subscribers.name,
     //     title: subscribers.title,
@@ -140,11 +140,11 @@ try{
     //     isActive: subscribers.isAvtive,
     //     expiresOn: subscribers.expiredOn
     // }
-    res.status(200).json({subscribers: subscribers })
+    res.status(200).json({ subscribers: subscribers })
     // console.log(subscribers)
-}catch(error){
+  } catch (error) {
     console.log('error at all payments', error?.message)
-    res.status(400).json({message:" error at all payments"})
-}
+    res.status(400).json({ message: " error at all payments" })
+  }
 
 }

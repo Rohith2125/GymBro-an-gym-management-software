@@ -39,17 +39,45 @@ exports.AllPlans = async (req, res) => {
         console.log('error in plans', error.message)
     }
 }
-exports.Deleteplans = async (req, res) => {
+exports.Deleteplan = async (req, res) => {
     try {
         const planid = req.params.planid
-        const remplan = Plan.findByIdAndDelete(planid)
-        if (!remplan) {
+        const delplan = await Plan.findByIdAndDelete(planid)
+        console.log(delplan)
+        if (!delplan) {
             return res.status(401).json({ message: 'no plan found' })
         }
-        return (res.status(200).json({ message: 'plan deleted successfully', plan: remplan }))
+        return (res.status(200).json({ message: 'plan deleted successfully', plan: delplan }))
     } catch (err) {
         console.log('error in delete', err.message)
         return res.status(500).json({ message: 'error in delete', error: err })
     }
 }
 
+exports.updatePlan = async (req, res) => {
+  try {
+    const planid = req.params.planid;
+    const updates = req.body;
+
+    const updatedPlan = await Plan.findByIdAndUpdate(
+      planid,
+      updates,
+      { new: true }
+    );
+
+    if (!updatedPlan) {
+      return res.status(404).json({ message: "Plan not found" });
+    }
+
+    res.status(200).json({
+      message: "Plan updated successfully",
+      plan: updatedPlan
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "error in updating plan",
+      error: error.message
+    });
+  }
+};

@@ -3,7 +3,7 @@ const {adminOnly} = require("../middleware/admin.js");
 const protect = require("../middleware/auth");
 const {createAdmin}= require('../controllers/authController.js')
 const { getProfile, UserCount } = require("../controllers/userController.js");
-const {CreatePlan,AllPlans,Deleteplans}= require('../controllers/planController.js')
+const {CreatePlan,AllPlans,Deleteplan, updatePlan}= require('../controllers/planController.js')
 
 
 const router = express.Router();
@@ -14,8 +14,7 @@ router.get("/profile", protect, adminOnly, getProfile);
 router.get('/user-count',protect,adminOnly, UserCount)
 router.post('/create-plan', protect,adminOnly, CreatePlan)
 router.get('/all-plans',protect,adminOnly, AllPlans)
-router.delete('/delete-plan/:planid',protect,adminOnly, Deleteplans)
-
-
+router.delete('/delete-plan/:planid',protect,adminOnly, Deleteplan)
+router.put('/update-plan/:planid', protect, adminOnly, updatePlan)
 
 module.exports= router;
