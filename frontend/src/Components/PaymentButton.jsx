@@ -71,7 +71,8 @@ const PaymentButton = ({ selectedPlan }) => {
 
     } catch (err) {
       console.error("Payment Error:", err.response?.data || err);
-      alert("Payment failed. Please try again.");
+      const errorMessage = err.response?.data?.message || "Payment failed. Please try again.";
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }

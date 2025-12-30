@@ -54,15 +54,27 @@ const PaymentHistory = ({ limit }) => {
     )
   }
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this payment record?')) return
+    try {
+      await axios.delete(`http://localhost:3000/api/auth/delete-payment/${id}`, { withCredentials: true })
+      setRecords(prev => prev.filter(rec => rec._id !== id))
+    } catch (error) {
+      console.log('Error deleting payment:', error.message)
+      alert('Failed to delete payment record')
+    }
+  }
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
       {/* Table Header */}
-      <div className="grid grid-cols-6 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+      <div className="grid grid-cols-7 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
         <div className="col-span-2">Member</div>
         <div>Plan</div>
         <div>Amount</div>
         <div>Status</div>
-        <div>Expires</div>
+        <div>Date</div>
+        <div className="text-right">Actions</div>
       </div>
 
       {/* Table Body */}
@@ -70,16 +82,16 @@ const PaymentHistory = ({ limit }) => {
         {records.map((rec, index) => (
           <div
             key={rec._id}
-            className="grid grid-cols-6 gap-4 px-6 py-4 items-center hover:bg-gray-50 transition-colors"
+            className="grid grid-cols-7 gap-4 px-6 py-4 items-center hover:bg-gray-50 transition-colors"
             style={{ animationDelay: `${index * 50}ms` }}
           >
             {/* Member */}
             <div className="col-span-2 flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-gray-800 to-black rounded-full flex items-center justify-center text-white font-bold text-sm">
-                {rec.userID?.name?.charAt(0)?.toUpperCase() || 'U'}
+                {rec.userId?.name?.charAt(0)?.toUpperCase() || 'U'}
               </div>
               <div>
-                <p className="font-semibold text-gray-900">{rec.userID?.name || 'Unknown'}</p>
+                <p className="font-semibold text-gray-900">{rec.userId?.name || 'Unknown'}</p>
                 <p className="text-xs text-gray-500">Member</p>
               </div>
             </div>
@@ -91,27 +103,27 @@ const PaymentHistory = ({ limit }) => {
 
             {/* Amount */}
             <div>
-              <p className="font-bold text-gray-900">₹{rec.planId?.amount || 0}</p>
+              <p className="font-bold text-gray-900">₹{rec.amountPaid || 0}</p>
             </div>
 
             {/* Status */}
             <div>
               <span className={`
                                 inline-flex px-3 py-1 rounded-full text-xs font-semibold
-                                ${rec.isActive
+                                ${rec.isPaid
                   ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-600'
+                  : 'bg-red-100 text-red-700'
                 }
                             `}>
-                {rec.isActive ? 'Active' : 'Inactive'}
+                {rec.isPaid ? 'Paid' : 'Pending'}
               </span>
             </div>
 
-            {/* Expires */}
+            {/* Date */}
             <div>
               <p className="text-gray-600 text-sm">
-                {rec.expiresOn
-                  ? new Date(rec.expiresOn).toLocaleDateString('en-IN', {
+                {rec.createdAt
+                  ? new Date(rec.createdAt).toLocaleDateString('en-IN', {
                     day: 'numeric',
                     month: 'short',
                     year: 'numeric'
@@ -119,6 +131,19 @@ const PaymentHistory = ({ limit }) => {
                   : '-'
                 }
               </p>
+            </div>
+
+            {/* Actions */}
+            <div className="text-right">
+              <button
+                onClick={() => handleDelete(rec._id)}
+                className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                title="Delete Record"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
             </div>
           </div>
         ))}

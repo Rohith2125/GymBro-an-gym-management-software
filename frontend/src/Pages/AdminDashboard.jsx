@@ -9,7 +9,23 @@ const AdminDashboard = () => {
 
     const [profile, setProfile] = useState(null)
     const [userCount, setUserCount] = useState(0)
+    const [totalRevenue, setTotalRevenue] = useState(0)
     const [activeTab, setActiveTab] = useState('overview')
+    const [userActiveCount, setUserActiveCount] = useState(0)
+    const [revenueFilter, setRevenueFilter] = useState('all')
+
+    const loadActiveCount = async () => {
+        try {
+            const { data } = await axios.get(`${API}/auth/active-list`, { withCredentials: true })
+            console.log('look:', data.activeCount)
+            setUserActiveCount(data.activeCount)
+        } catch (err) {
+            console.log('Error loading active count:', err.message)
+        }
+    }
+    useEffect(() => {
+        loadActiveCount()
+    }, [])
 
     async function AllUsers() {
         try {
@@ -28,6 +44,19 @@ const AdminDashboard = () => {
             console.log(err.message)
         }
     }
+
+    async function fetchRevenue(range = revenueFilter) {
+        try {
+            const { data } = await axios.get(`${API}/auth/total-revenue?range=${range}`, { withCredentials: true })
+            setTotalRevenue(data.revenue)
+        } catch (err) {
+            console.log('Error fetching revenue:', err.message)
+        }
+    }
+
+    useEffect(() => {
+        fetchRevenue(revenueFilter)
+    }, [revenueFilter])
 
     useEffect(() => {
         UserProfile()
@@ -74,11 +103,22 @@ const AdminDashboard = () => {
                         </div>
                         <div className="bg-gray-50 rounded-2xl p-5 border border-gray-200">
                             <p className="text-gray-500 text-sm mb-1">Active Members</p>
-                            <p className="text-3xl font-bold text-gray-900">-</p>
+                            <p className="text-3xl font-bold text-gray-900">{userActiveCount}</p>
                         </div>
                         <div className="bg-gray-50 rounded-2xl p-5 border border-gray-200">
-                            <p className="text-gray-500 text-sm mb-1">Total Revenue</p>
-                            <p className="text-3xl font-bold text-gray-900">-</p>
+                            <div className="flex justify-between items-start mb-1">
+                                <p className="text-gray-500 text-sm">Total Revenue</p>
+                                <select
+                                    value={revenueFilter}
+                                    onChange={(e) => setRevenueFilter(e.target.value)}
+                                    className="text-xs bg-white border border-gray-200 rounded-lg px-2 py-1 outline-none cursor-pointer hover:border-gray-400"
+                                >
+                                    <option value="all">All Time</option>
+                                    <option value="month">Last 30 Days</option>
+                                    <option value="week">Last 7 Days</option>
+                                </select>
+                            </div>
+                            <p className="text-3xl font-bold text-gray-900">₹{totalRevenue}</p>
                         </div>
                         <div className="bg-gray-50 rounded-2xl p-5 border border-gray-200">
                             <p className="text-gray-500 text-sm mb-1">Plans Created</p>

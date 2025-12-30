@@ -71,25 +71,40 @@ exports.MyMembership = async (req, res) => {
   try {
     // 💡 SECURE FIX: Get the user ID from the VERIFIED token payload
     // This value is guaranteed to exist if the 'protect' middleware passed.
-    const userId = req.user.id; 
-    
+    const userId = req.user.id;
+
     // Optional: Log the verified ID
-    console.log(`Verified user ID from token: ${userId}`); 
+    console.log(`Verified user ID from token: ${userId}`);
 
     // Use findOne to query by the custom 'user_id' field in the Membership model
     const membership = await Membership.findOne({ userID: userId });
-    
+
     console.log(membership);
-    
+
     if (!membership) {
-        // Use 404 since the user exists but the associated resource (membership) doesn't
-        return res.status(404).json({ message: "Membership not found for this user." });
+      // Use 404 since the user exists but the associated resource (membership) doesn't
+      return res.status(404).json({ message: "Membership not found for this user." });
     }
 
     res.status(200).json({ message: "Got membership", membership });
   } catch (error) {
     // ⚠️ Use 500 for internal errors like database issues
-    console.error("Error fetching membership:", error); 
+    console.error("Error fetching membership:", error);
     res.status(500).json({ message: "An internal server error occurred.", error: error.message });
   }
 }
+
+exports.ActiveList = async (req, res) => {
+  try {
+    const memberships = await Membership.find();
+
+    const activeCount = memberships.filter(
+      item => item.isActive === true
+    ).length;
+
+    return res.status(200).json({ activeCount });
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};

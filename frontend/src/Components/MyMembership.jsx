@@ -11,9 +11,10 @@ function MyMembership() {
 
     async function fetchMemberships() {
         try {
-            const res = await axios.get('http://localhost:3000/api/memberships/my-memberships', {
+            const res = await axios.get('http://localhost:3000/api/memberships', {
                 withCredentials: true
             })
+            console.log('Membership API Response:', res.data)
             setMemberships(res.data.memberships || [])
         } catch (error) {
             console.log('Error fetching memberships:', error.message)

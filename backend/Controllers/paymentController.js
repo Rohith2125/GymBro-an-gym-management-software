@@ -14,6 +14,20 @@ exports.CreatePayment = async (req, res) => {
       return res.status(404).json({ message: 'User not found' })
     }
 
+    // 🛡️ RESTRICTION: Check if user already has an active membership
+    const activeMembership = await Membership.findOne({
+      userID: userId,
+      isActive: true,
+      expiresOn: { $gt: new Date() }
+    })
+
+    if (activeMembership) {
+      return res.status(400).json({
+        success: false,
+        message: 'You already have an active membership. You can only buy a new one once it expires.'
+      })
+    }
+
     const plan = await Plan.findById(planId)
     if (!plan) {
       return res.status(400).json({ message: 'Plan does not exist' })
@@ -21,7 +35,7 @@ exports.CreatePayment = async (req, res) => {
 
     // Just create Razorpay order (no membership yet!)
     const options = {
-      amount: amount * 100,
+      amount: Math.round(amount * 100), // Ensure amount is an integer
       currency: 'INR',
       receipt: 'receipt_' + Date.now(),
       notes: {
@@ -59,7 +73,6 @@ exports.CreatePayment = async (req, res) => {
   }
 }
 
-
 // Add this NEW controller function
 const crypto = require('crypto')
 
@@ -81,6 +94,20 @@ exports.VerifyPayment = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Payment verification failed - Invalid signature'
+      })
+    }
+
+    // 🛡️ RE-CHECK RESTRICTION: Secondary safeguard before membership creation
+    const existingActive = await Membership.findOne({
+      userID: userId,
+      isActive: true,
+      expiresOn: { $gt: new Date() }
+    })
+
+    if (existingActive) {
+      return res.status(400).json({
+        success: false,
+        message: 'Membership already active.'
       })
     }
 
@@ -109,7 +136,7 @@ exports.VerifyPayment = async (req, res) => {
     const membership = await Membership.create({
       userID: userId,
       planId: plan._id,
-      Date: fromDate,
+      from: fromDate, // Explicitly use fromDate
       expiresOn: expiresOn,
       isActive: true
     })
@@ -131,20 +158,73 @@ exports.VerifyPayment = async (req, res) => {
 
 exports.AllPayments = async (req, res) => {
   try {
+    const subscribers = await payment.find()
+      .populate("userId", "name")
+      .populate('planId', "title duration")
+      .sort({ createdAt: -1 })
 
-    const subscribers = await Membership.find().populate("userID", "name").populate('planId', "title amount").sort({ createdAt: -1 })
-    // const record= {
-    //     name: subscribers.name,
-    //     title: subscribers.title,
-    //     amount: subscribers.amount,
-    //     isActive: subscribers.isAvtive,
-    //     expiresOn: subscribers.expiredOn
-    // }
     res.status(200).json({ subscribers: subscribers })
-    // console.log(subscribers)
   } catch (error) {
     console.log('error at all payments', error?.message)
     res.status(400).json({ message: " error at all payments" })
   }
-
 }
+
+exports.TotalRevenue = async (req, res) => {
+  try {
+    const { range } = req.query;
+    let query = { isPaid: true };
+
+    if (range === 'week') {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      query.createdAt = { $gte: weekAgo };
+    } else if (range === 'month') {
+      const monthAgo = new Date();
+      monthAgo.setDate(monthAgo.getDate() - 30);
+      query.createdAt = { $gte: monthAgo };
+    }
+
+    const subscriptions = await payment.find(query);
+    const revenue = subscriptions.reduce((total, item) => total + (Number(item.amountPaid) || 0), 0);
+
+    console.log(`Total Revenue (${range || 'all'}):`, revenue);
+    res.status(200).json({
+      success: true,
+      message: `Total revenue (${range || 'all-time'}) calculated successfully`,
+      subscriptions,
+      revenue
+    });
+  } catch (error) {
+    console.log("error in total revenue cal:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Error calculating total revenue",
+      error: error.message
+    });
+  }
+};
+
+exports.DeletePayment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedPayment = await payment.findByIdAndDelete(id);
+
+    if (!deletedPayment) {
+      return res.status(404).json({ message: "Payment record not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Payment record deleted successfully",
+      deletedPayment
+    });
+  } catch (error) {
+    console.log("Error deleting payment:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting payment",
+      error: error.message
+    });
+  }
+};
