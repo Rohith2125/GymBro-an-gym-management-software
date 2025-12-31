@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { API_BASE_URL } from '../api/config'
 
 function MyMembership() {
     const [memberships, setMemberships] = useState([])
@@ -11,7 +12,7 @@ function MyMembership() {
 
     async function fetchMemberships() {
         try {
-            const res = await axios.get('http://localhost:3000/api/memberships', {
+            const res = await axios.get(`${API_BASE_URL}/memberships`, {
                 withCredentials: true
             })
             console.log('Membership API Response:', res.data)

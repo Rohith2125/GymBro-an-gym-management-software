@@ -4,6 +4,7 @@ import Plans from "../Components/Plans";
 import PaymentButton from "../Components/PaymentButton";
 import MyMembership from "../Components/MyMembership";
 import LogoutButton from "../Components/LogoutButton";
+import { API_BASE_URL } from "../api/config";
 
 function Dashboard() {
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -15,7 +16,7 @@ function Dashboard() {
 
   const fetchUserProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/user/Profile", {
+      const res = await axios.get(`${API_BASE_URL}/user/Profile`, {
         withCredentials: true
       });
       setUser(res.data.profileData?.user);

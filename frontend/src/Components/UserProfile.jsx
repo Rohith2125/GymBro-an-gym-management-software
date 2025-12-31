@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { API_BASE_URL } from '../api/config'
 
 
 
 const AdminDashboard = () => {
 
-    const API = "http://localhost:3000/api"
+    const API = API_BASE_URL
 
     const [profile, setProfile] = useState(null)
 
@@ -28,8 +29,8 @@ const AdminDashboard = () => {
                 <h1>hii</h1>
                 {profile ? (
                     <div>
-                    <h1>{profile.user.name}</h1>
-                    <h1>{profile.user.email}</h1>
+                        <h1>{profile.user.name}</h1>
+                        <h1>{profile.user.email}</h1>
                     </div>
                 ) : (
                     <h1>this is admin place</h1>

@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { useState } from 'react'
+import { API_BASE_URL } from '../api/config'
 
 const PlanCreation = () => {
-  const API = "http://localhost:3000/api"
+  const API = API_BASE_URL
 
   const [title, setTitle] = useState('')
   const [amount, setAmount] = useState('')

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import axios from 'axios'
 import { GoogleLogin } from '@react-oauth/google'
 import { useNavigate, Link } from 'react-router-dom'
+import { API_BASE_URL } from '../api/config'
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -9,7 +10,7 @@ function Login() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const API = "http://localhost:3000/api"
+  const API = API_BASE_URL
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -122,8 +123,8 @@ function Login() {
               type="submit"
               disabled={loading}
               className={`w-full py-4 rounded-xl font-bold text-lg transition-all duration-300 ${loading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-black text-white hover:bg-gray-800 hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-black text-white hover:bg-gray-800 hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]'
                 }`}
             >
               {loading ? (

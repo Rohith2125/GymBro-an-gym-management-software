@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../api/config";
 
 const PaymentButton = ({ selectedPlan }) => {
   const [loading, setLoading] = useState(false);
@@ -15,7 +16,7 @@ const PaymentButton = ({ selectedPlan }) => {
     try {
       // Step 1: Create order
       const { data } = await axios.post(
-        "http://localhost:3000/api/user/make-payment",
+        `${API_BASE_URL}/user/make-payment`,
         {
           amount: selectedPlan.amount,
           planId: selectedPlan._id
@@ -36,7 +37,7 @@ const PaymentButton = ({ selectedPlan }) => {
         handler: async function (response) {
           try {
             const verifyRes = await axios.post(
-              "http://localhost:3000/api/user/verify-payment",
+              `${API_BASE_URL}/user/verify-payment`,
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,

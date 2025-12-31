@@ -4,8 +4,9 @@ import PlanCreation from '../Components/PlanCreation'
 import LogoutButton from '../Components/LogoutButton'
 import PaymentHistory from '../Components/PaymentHistory'
 import Plans from '../Components/Plans'
+import { API_BASE_URL } from '../api/config'
 const AdminDashboard = () => {
-    const API = "http://localhost:3000/api"
+    const API = API_BASE_URL
 
     const [profile, setProfile] = useState(null)
     const [userCount, setUserCount] = useState(0)

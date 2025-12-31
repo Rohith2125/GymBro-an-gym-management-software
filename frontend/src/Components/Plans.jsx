@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import AdminPlanActions from './Admincomp/AdminPlanActions'
+import { API_BASE_URL } from '../api/config'
 
 function Plans({ selectedPlan, setSelectedPlan }) {
-  const API = 'http://localhost:3000/api'
+  const API = API_BASE_URL
   const [plans, setPlans] = useState([])
   const [loading, setLoading] = useState(true)
   const [role, setRole] = useState(null)
