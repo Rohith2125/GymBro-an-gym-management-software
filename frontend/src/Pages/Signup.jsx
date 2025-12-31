@@ -71,8 +71,8 @@ function Signup() {
                 {/* Logo */}
                 <div className="text-center mb-8">
                     <Link to="/" className="inline-flex items-center gap-2 mb-4">
-                        <span className="text-3xl">🏋️</span>
-                        <span className="text-2xl font-bold text-white">GymMate</span>
+                        <span className="text-3xl"></span>
+                        <span className="text-2xl font-bold text-white">GymBro</span>
                     </Link>
                 </div>
 

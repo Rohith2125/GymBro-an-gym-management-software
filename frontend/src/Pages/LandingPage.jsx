@@ -27,8 +27,8 @@ function LandingPage() {
             <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-gray-200/20">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <span className="text-2xl">🏋️</span>
-                        <span className="text-xl font-bold text-gray-900">GymMate</span>
+                        <span className="text-2xl"></span>
+                        <span className="text-xl font-bold text-gray-900">GymBro</span>
                     </div>
                     <div className="flex gap-3">
                         <button
@@ -58,7 +58,7 @@ function LandingPage() {
                 <div className="relative z-10 max-w-5xl mx-auto text-center">
                     <div className="animate-fade-in">
                         <span className="inline-block px-4 py-2 bg-white/10 rounded-full text-white/80 text-sm font-medium mb-6 backdrop-blur-sm">
-                            🚀 Your Fitness Journey Starts Here
+                            Your Fitness Journey Starts Here
                         </span>
                     </div>
 

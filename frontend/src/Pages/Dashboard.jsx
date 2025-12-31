@@ -30,8 +30,8 @@ function Dashboard() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">🏋️</span>
-            <span className="text-xl font-bold text-gray-900">GymMate</span>
+            <span className="text-2xl"></span>
+            <span className="text-xl font-bold text-gray-900">GymBro</span>
           </div>
           <div className="flex items-center gap-4">
             {user && (
@@ -87,7 +87,7 @@ function Dashboard() {
                   </div>
                 ) : (
                   <div className="text-center py-8 text-gray-500">
-                    <p className="text-4xl mb-2">👈</p>
+                    <p className="text-4xl mb-2"></p>
                     <p>Select a plan to proceed</p>
                   </div>
                 )}
