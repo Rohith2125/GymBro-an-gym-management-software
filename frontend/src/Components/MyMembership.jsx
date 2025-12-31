@@ -41,7 +41,9 @@ function MyMembership() {
         )
     }
 
-    const activeMembership = memberships.find(m => m.isActive)
+    const now = new Date()
+    const activeMembership = memberships.find(m => m.isActive && new Date(m.expiresOn) > now)
+        || memberships[0] // Fallback to most recent if none are "active & unexpired"
 
     if (!activeMembership) {
         return (

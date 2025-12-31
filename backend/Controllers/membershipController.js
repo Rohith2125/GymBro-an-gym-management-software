@@ -45,10 +45,9 @@ exports.getMyMemberships = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const memberships = await Membership.find({ userID: userId }).populate(
-      "planId",
-      "title duration amount"
-    );
+    const memberships = await Membership.find({ userID: userId })
+      .populate("planId", "title duration amount")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       message: "Memberships fetched",
