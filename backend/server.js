@@ -41,7 +41,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options("(.*)", cors(corsOptions));
+app.options(/.*/, cors(corsOptions)); // Handle preflight requests for all routes
 
 // Routes
 app.use("/api/auth", authRoutes);
