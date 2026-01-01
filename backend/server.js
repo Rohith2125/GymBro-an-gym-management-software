@@ -35,10 +35,11 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: true, // Reflects the request origin, allowing any origin that connects
     credentials: true,
   })
 );
+app.options("*", cors()); // Handle preflight requests for all routes
 
 // Routes
 app.use("/api/auth", authRoutes);
