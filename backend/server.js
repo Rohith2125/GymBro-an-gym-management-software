@@ -33,13 +33,15 @@ const allowedOrigins = [
   "http://localhost:5173"
 ].filter(Boolean);
 
-app.use(
-  cors({
-    origin: true, // Reflects the request origin, allowing any origin that connects
-    credentials: true,
-  })
-);
-app.options("*", cors()); // Handle preflight requests for all routes
+const corsOptions = {
+  origin: true, // Allow any origin
+  credentials: true, // Allow cookies
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 // Routes
 app.use("/api/auth", authRoutes);
