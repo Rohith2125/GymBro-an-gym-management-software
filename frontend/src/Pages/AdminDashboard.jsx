@@ -17,7 +17,7 @@ const AdminDashboard = () => {
 
     const loadActiveCount = async () => {
         try {
-            const { data } = await axios.get(`${API}/auth/active-list`, { withCredentials: true })
+            const { data } = await axios.get(`${API}/admin/active-list`, { withCredentials: true })
             console.log('look:', data.activeCount)
             setUserActiveCount(data.activeCount)
         } catch (err) {
@@ -30,7 +30,7 @@ const AdminDashboard = () => {
 
     async function AllUsers() {
         try {
-            const { data } = await axios.get(`${API}/auth/user-count`, { withCredentials: true })
+            const { data } = await axios.get(`${API}/admin/user-count`, { withCredentials: true })
             setUserCount(data.userCount)
         } catch (err) {
             console.log('Error fetching users:', err.message)
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
 
     async function fetchRevenue(range = revenueFilter) {
         try {
-            const { data } = await axios.get(`${API}/auth/total-revenue?range=${range}`, { withCredentials: true })
+            const { data } = await axios.get(`${API}/admin/total-revenue?range=${range}`, { withCredentials: true })
             setTotalRevenue(data.revenue)
         } catch (err) {
             console.log('Error fetching revenue:', err.message)

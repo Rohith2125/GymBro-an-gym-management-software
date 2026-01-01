@@ -20,4 +20,5 @@ router.delete('/delete-plan/:planid', protect, adminOnly, Deleteplan)
 router.put('/update-plan/:planid', protect, adminOnly, updatePlan)
 router.get('/total-revenue', protect, adminOnly, TotalRevenue)
 router.delete('/delete-payment/:id', protect, adminOnly, DeletePayment)
+router.get('/all-members', protect, adminOnly, AllPayments)
 module.exports = router;

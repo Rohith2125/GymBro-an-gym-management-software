@@ -8,7 +8,7 @@ const PaymentHistory = ({ limit }) => {
 
   const fetchData = async () => {
     try {
-      const { data } = await axios.get(`${API_BASE_URL}/user/all-members`, { withCredentials: true })
+      const { data } = await axios.get(`${API_BASE_URL}/admin/all-members`, { withCredentials: true })
       // console.log('PaymentHistory API Response:', data)
       // console.log('Subscribers:', data.subscribers)
       const allRecords = data.subscribers || []
@@ -58,7 +58,7 @@ const PaymentHistory = ({ limit }) => {
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this payment record?')) return
     try {
-      await axios.delete(`${API_BASE_URL}/auth/delete-payment/${id}`, { withCredentials: true })
+      await axios.delete(`${API_BASE_URL}/admin/delete-payment/${id}`, { withCredentials: true })
       setRecords(prev => prev.filter(rec => rec._id !== id))
     } catch (error) {
       console.log('Error deleting payment:', error.message)
