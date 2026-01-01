@@ -18,10 +18,12 @@ const createTokenAndSetCookie = (user, res) => {
     { expiresIn: "1h" }
   );
 
+  const isProduction = process.env.NODE_ENV === "production" || process.env.FRONTEND_URL?.includes("onrender.com");
+
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false, 
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
     maxAge: 3600000,
   });
 
@@ -153,7 +155,13 @@ exports.googleLogin = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie("token");
+  const isProduction = process.env.NODE_ENV === "production" || process.env.FRONTEND_URL?.includes("onrender.com");
+
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax"
+  });
   res.status(200).json({ message: "Logged out successfully" });
 };
 
