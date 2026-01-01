@@ -4,7 +4,7 @@ const protect = require("../middleware/auth");
 const { createAdmin } = require('../controllers/authController.js')
 const { getProfile, UserCount, ActiveList } = require("../controllers/userController.js");
 const { CreatePlan, AllPlans, Deleteplan, updatePlan } = require('../controllers/planController.js')
-const { TotalRevenue, DeletePayment } = require('../controllers/paymentController.js')
+const { TotalRevenue, DeletePayment, AllPayments } = require('../controllers/paymentController.js')
 
 
 const router = express.Router();
