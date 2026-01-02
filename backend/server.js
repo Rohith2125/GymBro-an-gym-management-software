@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
@@ -16,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 // Connect DB
 dbConnect();
+
 // Middlewares
 app.use(express.json());
 app.use(cookieParser());
@@ -26,6 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// FIXED: Whitelist specific origins instead of allowing any
 const allowedOrigins = [
   "https://gymbro-w1qp.onrender.com",
   "https://gymbro.onrender.com",
@@ -34,10 +35,18 @@ const allowedOrigins = [
 ].filter(Boolean);
 
 const corsOptions = {
-  origin: true, // Allow any origin
-  credentials: true, // Allow cookies
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization"],
+  maxAge: 86400 // Cache preflight for 24 hours
 };
 
 app.use(cors(corsOptions));
