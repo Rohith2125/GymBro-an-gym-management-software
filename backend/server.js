@@ -24,26 +24,38 @@ const allowedOrigins = [
   "http://localhost:3000"
 ].filter(Boolean);
 
+// 1. Security Headers (COOP for Google Auth)
+app.use((req, res, next) => {
+  res.header("Cross-Origin-Opener-Policy", "same-origin-allow-popups");
+  next();
+});
+
+// 2. CORS Middleware
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps)
-    if (!origin || allowedOrigins.includes(origin) || (origin && origin.includes("onrender.com"))) {
-      callback(null, true);
-    } else {
-      console.warn("CORS Blocked Origin:", origin);
-      callback(new Error("Not allowed by CORS"));
+  origin: (origin, callback) => {
+    // If no origin (server-to-server or mobile app), allow
+    if (!origin) return callback(null, true);
+
+    // Check key allowed origins
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".onrender.com") ||
+      origin.includes("localhost")
+    ) {
+      return callback(null, true);
     }
+
+    // Log blocked origins for debugging but don't crash
+    console.log("Blocked by CORS:", origin);
+    callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
-  optionsSuccessStatus: 200,
-  maxAge: 86400
+  optionsSuccessStatus: 200 // Legacy browser support
 };
 
-// 1. CORS MUST BE FIRST
 app.use(cors(corsOptions));
-// Use Regex for the wildcard to avoid string parsing errors in Express 5
 app.options(/.*/, cors(corsOptions));
 
 // 2. Debug Logger
